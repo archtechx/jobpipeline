@@ -1,5 +1,9 @@
 # Job Pipeline
 
+<p align="center">
+    <img width="600" src="https://i.imgur.com/AcVXakZ.png" alt="Job Pipeline" />
+</p>
+
 The `JobPipeline` is a simple, yet **extremely powerful** class that lets you **convert any (series of) jobs into event listeners.**
 
 You may use a job pipeline like any other listener, so you can register it in the `EventServiceProvider` using the `$listen` array, or in any other place using `Event::listen()` — up to you.
