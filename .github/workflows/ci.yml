@@ -15,5 +15,5 @@ jobs:
       run: composer install
     - name: Start Redis
       uses: supercharge/redis-github-action@1.1.0
-    - name: Run unit tests
+    - name: Run tests
       run: phpunit
