@@ -22,8 +22,9 @@
         "illuminate/support": "^7.11"
     },
     "require-dev": {
+        "ext-redis": "*",
+        "nunomaduro/larastan": "^0.5.8",
         "orchestra/testbench": "^5.2",
-        "spatie/valuestore": "^1.2",
-        "ext-redis": "*"
+        "spatie/valuestore": "^1.2"
     }
 }

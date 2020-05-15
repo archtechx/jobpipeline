@@ -5,7 +5,7 @@ namespace Stancl\JobPipeline;
 use Closure;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class JobPipeline implements ShouldQueue
+final class JobPipeline implements ShouldQueue
 {
     /** @var bool */
     public static $shouldBeQueuedByDefault = false;
@@ -13,17 +13,22 @@ class JobPipeline implements ShouldQueue
     /** @var callable[]|string[] */
     public $jobs;
 
-    /** @var callable|null */
+    /** @var callable */
     public $send;
 
     /**
      * A value passed to the jobs. This is the return value of $send.
+     *
+     * @var array<mixed, mixed>
      */
     public $passable;
 
     /** @var bool */
     public $shouldBeQueued;
 
+    /**
+     * @param callable[]|string[] $jobs
+     */
     public function __construct($jobs, callable $send = null, bool $shouldBeQueued = null)
     {
         $this->jobs = $jobs;
@@ -47,7 +52,7 @@ class JobPipeline implements ShouldQueue
         return $this;
     }
 
-    public function shouldBeQueued(bool $shouldBeQueued)
+    public function shouldBeQueued(bool $shouldBeQueued): self
     {
         $this->shouldBeQueued = $shouldBeQueued;
 
@@ -57,7 +62,9 @@ class JobPipeline implements ShouldQueue
     public function handle(): void
     {
         foreach ($this->jobs as $job) {
-            app()->call([new $job(...$this->passable), 'handle']);
+            /** @var callable $jobHandle */
+            $jobHandle = [new $job(...$this->passable), 'handle'];
+            app()->call($jobHandle);
         }
     }
 
@@ -79,6 +86,8 @@ class JobPipeline implements ShouldQueue
 
     /**
      * Return a serializable version of the current object.
+     *
+     * @param callable[] $listenerArgs
      */
     public function executable($listenerArgs): self
     {
