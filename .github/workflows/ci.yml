@@ -7,10 +7,13 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
+    - name: Check Composer configuration
+      run: composer validate --strict
     - name: Install dependencies
       run: composer install
     - name: Start Redis
       uses: supercharge/redis-github-action@1.1.0
-    - name: Run tests
+    - name: Run unit tests
       run: phpunit
