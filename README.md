@@ -59,7 +59,7 @@ JobPipeline::make([
     SeedDatabase::class,
 ])->send(function (TenantCreated $event) {
     return $event->tenant;
-})->shouldBeQueued(true),
+})->shouldBeQueued(true)
 ```
 
 Finally, convert the pipeline to a listener and bind it to an event:
