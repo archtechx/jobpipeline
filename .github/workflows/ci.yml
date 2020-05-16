@@ -7,10 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: Check Composer configuration
-      run: composer validate --strict
+    - uses: actions/checkout@v2
     - name: Install dependencies
       run: composer install
     - name: Start Redis
