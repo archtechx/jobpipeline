@@ -88,7 +88,7 @@ class JobPipeline implements ShouldQueue
         $passable = is_array($passable) ? $passable : [$passable];
 
         $clone->passable = $passable;
-        unset($clone->send);
+        $clone->send = null;
 
         return $clone;
     }
