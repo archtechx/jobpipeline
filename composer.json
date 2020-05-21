@@ -19,10 +19,10 @@
         }
     },
     "require": {
-        "illuminate/support": "^7.11"
+        "illuminate/support": "^6.0|^7.11"
     },
     "require-dev": {
-        "orchestra/testbench": "^5.2",
+        "orchestra/testbench": "^4.0|^5.2",
         "spatie/valuestore": "^1.2",
         "ext-redis": "*"
     }
