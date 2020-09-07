@@ -19,11 +19,13 @@
         }
     },
     "require": {
-        "illuminate/support": "^6.0|^7.11"
+        "illuminate/support": "^6.0|^7.11|^8.0"
     },
     "require-dev": {
-        "orchestra/testbench": "^4.0|^5.2",
+        "orchestra/testbench": "^4.0|^5.2|^6.0",
         "spatie/valuestore": "^1.2",
         "ext-redis": "*"
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }
