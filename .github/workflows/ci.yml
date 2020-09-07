@@ -8,7 +8,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
         php: [7.3, 7.4]
         laravel: [6.*, 7.*, 8.*]
         dependency-version: [prefer-lowest, prefer-stable]
@@ -38,7 +38,8 @@ jobs:
             php-version: ${{ matrix.php }}
             extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
             coverage: none
-
+      -   name: Start Redis
+          uses: supercharge/redis-github-action@1.1.0
       -   name: Install dependencies
           run: |
             composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" --no-interaction --no-update
