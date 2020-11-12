@@ -75,6 +75,8 @@ class JobPipelineTest extends TestCase
         event(new TestEvent(new TestModel()));
         $this->artisan('queue:work --once');
 
+        sleep(1);
+
         $this->assertSame('bar', $this->valuestore->get('foo'));
     }
 
@@ -109,6 +111,27 @@ class JobPipelineTest extends TestCase
         event(new TestEvent(new TestModel()));
 
         $this->assertSame(['a', 'b'], app('test_args'));
+    }
+
+    /** @test */
+    public function the_pipeline_can_be_canceled_by_returning_false_from_any_job()
+    {
+        Event::listen(TestEvent::class, JobPipeline::make([
+            FalseJob::class,
+            FooJob::class,
+        ])->send(function () {
+            return $this->valuestore;
+        })->shouldBeQueued(true)->toListener());
+
+        event(new TestEvent(new TestModel()));
+        $this->artisan('queue:work --once');
+
+        sleep(1);
+
+        $this->assertTrue($this->valuestore->get('false_job_executed'));
+
+        // Foo job is not excuted
+        $this->assertFalse($this->valuestore->has('foo'));
     }
 }
 
@@ -191,5 +214,22 @@ class JobWithMultipleArguments
     {
         // we dont queue this job so no need to use valuestore here
         app()->instance('test_args', [$this->first, $this->second]);
+    }
+}
+
+class FalseJob
+{
+    protected $valuestore;
+
+    public function __construct(Valuestore $valuestore)
+    {
+        $this->valuestore = $valuestore;
+    }
+
+    public function handle()
+    {
+        $this->valuestore->put('false_job_executed', true);
+
+        return false;
     }
 }
