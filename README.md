@@ -86,3 +86,5 @@ Event::listen(TenantCreated::class, JobPipeline::make([
 ```
 
 Note that you can use job pipelines even for converting single jobs to event listeners. That's useful if you have some logic in job classes and don't want to create listener classes just to be able to run these jobs as a result of an event being fired.
+
+Tip: Returning `false` from a job cancels the execution of all following jobs in the pipeline. This can be useful to cancel a job pipeline that creates, migrates, and seeds databases if the create database job exists (e.g. because it detects that a database already exists). So it can be good to separate jobs into multiple pipelines, so that each logical category of jobs can be stopped individually.
