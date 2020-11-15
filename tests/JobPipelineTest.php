@@ -133,6 +133,24 @@ class JobPipelineTest extends TestCase
         // Foo job is not excuted
         $this->assertFalse($this->valuestore->has('foo'));
     }
+
+    /** @test */
+    public function closures_can_be_used_as_jobs()
+    {
+        $passes = false;
+
+        Event::listen(TestEvent::class, JobPipeline::make([
+            function (TestModel $model) use (&$passes) {
+                $passes = $model instanceof TestModel;
+            }
+        ])->send(function (TestEvent $event) {
+            return $event->testModel;
+        })->toListener());
+
+        event(new TestEvent(new TestModel()));
+
+        $this->assertTrue($passes);
+    }
 }
 
 class FooJob
