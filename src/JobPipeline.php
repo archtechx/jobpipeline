@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace Stancl\JobPipeline;
 
 use Closure;
-use Throwable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class JobPipeline implements ShouldQueue
 {
@@ -66,9 +67,8 @@ class JobPipeline implements ShouldQueue
 
             try {
                 $result = app()->call($job);
-            } catch(Throwable $exception) {
-                if ( method_exists(get_class($job[0]), 'failed') ) {
-                    
+            } catch (Throwable $exception) {
+                if (method_exists(get_class($job[0]), 'failed')) {
                     call_user_func_array([$job[0], 'failed'], [$exception]);
                 } else {
                     Log::error($exception);
