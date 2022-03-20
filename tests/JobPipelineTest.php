@@ -133,6 +133,22 @@ class JobPipelineTest extends TestCase
         // Foo job is not excuted
         $this->assertFalse($this->valuestore->has('foo'));
     }
+    
+    /** @test */
+    public function the_pipeline_can_execute_failed_method_on_job()
+    {
+        Event::listen(TestEvent::class, JobPipeline::make([
+            ExceptionJob::class,
+        ])->send(function () {
+            return $this->valuestore;
+        })->toListener());
+
+        event(new TestEvent(new TestModel()));
+
+        sleep(1);
+
+        $this->assertEquals($this->valuestore->get('exeception'), 'pipeline exception');
+    }
 
     /** @test */
     public function closures_can_be_used_as_jobs()
@@ -249,5 +265,25 @@ class FalseJob
         $this->valuestore->put('false_job_executed', true);
 
         return false;
+    }
+}
+
+class ExceptionJob
+{
+    protected $valuestore;
+
+    public function __construct(Valuestore $valuestore)
+    {
+        $this->valuestore = $valuestore;
+    }
+
+    public function handle()
+    {
+        throw new \Exception('pipeline exception', 1);
+    }
+
+    public function failed(\Throwable $e)
+    {
+        $this->valuestore->put('exeception', $e->getMessage());
     }
 }
