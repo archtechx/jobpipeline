@@ -71,7 +71,7 @@ class JobPipeline implements ShouldQueue
                 if (method_exists(get_class($job[0]), 'failed')) {
                     call_user_func_array([$job[0], 'failed'], [$exception]);
                 } else {
-                    Log::error($exception);
+                    throw $exception;
                 }
 
                 break;
