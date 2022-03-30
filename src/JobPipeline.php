@@ -6,7 +6,6 @@ namespace Stancl\JobPipeline;
 
 use Closure;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class JobPipeline implements ShouldQueue
