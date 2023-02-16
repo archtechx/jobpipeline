@@ -93,7 +93,7 @@ class JobPipeline implements ShouldQueue
             if ($this->shouldBeQueued) {
                 dispatch($executable);
             } else {
-                dispatch_now($executable);
+                dispatch_sync($executable);
             }
         };
     }
