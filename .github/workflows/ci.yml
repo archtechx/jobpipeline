@@ -8,16 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: ["8.0", "8.1"]
-        laravel: ["^9.0", "^10.0"]
         include:
-          - laravel: "^9.0"
-            testbench: "^7.0"
-          - laravel: "^10.0"
-            testbench: "^8.0"
-        exclude:
-          - laravel: "^10.0"
-            php: "8.0"
+        - laravel: 9
+          php: 8.0
+        - laravel: 10
+          php: 8.1
 
     steps:
       - name: Checkout code
@@ -32,7 +27,7 @@ jobs:
         uses: supercharge/redis-github-action@1.1.0
 
       - name: Install dependencies
-        run: composer require "laravel/framework:${{matrix.laravel}}"
+        run: composer require "laravel/framework:^${{matrix.laravel}}.0"
       - name: Run tests
         run: vendor/bin/phpunit
 
