@@ -63,8 +63,7 @@ class JobPipeline implements ShouldQueue
     {
         if (is_string($shouldBeQueued))
         {
-            $this->onQueue($shouldBeQueued);
-            $this->shouldBeQueued = true;
+            $this->shouldBeQueuedOn($shouldBeQueued);
         }
         else
         {
