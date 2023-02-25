@@ -26,6 +26,9 @@ class JobPipeline implements ShouldQueue
 
     /** @var bool */
     public $shouldBeQueued;
+    
+    /** @var string */
+    public $queue;
 
     public function __construct($jobs, callable $send = null, bool $shouldBeQueued = null)
     {
@@ -53,6 +56,13 @@ class JobPipeline implements ShouldQueue
     public function shouldBeQueued(bool $shouldBeQueued = true)
     {
         $this->shouldBeQueued = $shouldBeQueued;
+
+        return $this;
+    }
+    
+    public function onQueue(string $queue)
+    {
+        $this->queue = $queue;
 
         return $this;
     }
