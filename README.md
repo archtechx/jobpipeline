@@ -50,6 +50,8 @@ Next, decide if you want to queue the pipeline. By default, pipelines are synchr
 > 🔥 If you **do** want pipelines to be queued by default, you can do that by setting a static property:
 `\Stancl\JobPipeline\JobPipeline::$shouldBeQueuedByDefault = true;`
 
+or:
+
 ```php
 <?php
 
@@ -64,6 +66,34 @@ JobPipeline::make([
 ])->send(function (TenantCreated $event) {
     return $event->tenant;
 })->shouldBeQueued(true)
+```
+
+If you want to push the job to a different queue, you can pass a string as a parameter, instead of a boolean: `shouldBeQueued('another-queue')`.
+
+The following methods are available too, for further configuration if needed:
+- `onConnection(string $connection)`
+- `onQueue(string $queue)`
+- `delay($delay)`
+- `tries($tries)`
+
+```php
+<?php
+
+use Stancl\Tenancy\Events\TenantCreated;
+use Stancl\JobPipeline\JobPipeline;
+use Stancl\Tenancy\Jobs\{CreateDatabase, MigrateDatabase, SeedDatabase};
+
+JobPipeline::make([
+    CreateDatabase::class,
+    MigrateDatabase::class,
+    SeedDatabase::class,
+])->send(function (TenantCreated $event) {
+    return $event->tenant;
+})->shouldBeQueued(true)
+    ->onConnection('connection-different-from-default')
+    ->onQueue('queue-different-from-default')
+    ->delay(5)
+    ->tries(2);
 ```
 
 Finally, convert the pipeline to a listener and bind it to an event:
