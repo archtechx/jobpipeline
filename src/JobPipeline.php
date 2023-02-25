@@ -28,10 +28,15 @@ class JobPipeline implements ShouldQueue
     public bool $shouldBeQueued;
 
     /** @var string */
-    public string|null $queue;
+    public string|null $connection;
 
     /** @var string */
-    public string|null $connection;
+    public string|null $queue;
+
+    /** @var int */
+    public int $timeout = 1;
+
+    public $delay = 0;
 
     /** @var int */
     public int $tries = 1;
@@ -96,6 +101,13 @@ class JobPipeline implements ShouldQueue
         return $this;
     }
 
+    public function timeout(int $timeoutInSeconds)
+    {
+        $this->timeout = $timeoutInSeconds;
+
+        return $this;
+    }
+
     public function delay($delay)
     {
         $this->delay = $delay;
@@ -103,7 +115,7 @@ class JobPipeline implements ShouldQueue
         return $this;
     }
 
-    public function tries($tries)
+    public function tries(int $tries)
     {
         $this->tries = $tries;
 
