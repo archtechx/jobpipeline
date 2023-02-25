@@ -73,6 +73,7 @@ If you want to push the job to a different queue, you can pass a string as a par
 The following methods are available too, for further configuration if needed:
 - `onConnection(string $connection)`
 - `onQueue(string $queue)`
+- `timeout(int $timeoutInSeconds)`
 - `delay($delay)`
 - `tries($tries)`
 
@@ -92,7 +93,8 @@ JobPipeline::make([
 })->shouldBeQueued(true)
     ->onConnection('connection-different-from-default')
     ->onQueue('queue-different-from-default')
-    ->delay(5)
+    ->timeout(180)
+    ->delay(15)
     ->tries(2);
 ```
 
