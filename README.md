@@ -68,14 +68,7 @@ JobPipeline::make([
 })->shouldBeQueued(true)
 ```
 
-If you want to push the job to a different queue, you can pass a string as a parameter, instead of a boolean: `shouldBeQueued('another-queue')`.
-
-The following methods are available too, for further configuration if needed:
-- `onConnection(string $connection)`
-- `onQueue(string $queue)`
-- `timeout(int $timeoutInSeconds)`
-- `delay($delay)`
-- `tries($tries)`
+If you want to push the job to a different queue, you can pass a string as a second parameter:
 
 ```php
 <?php
@@ -90,12 +83,7 @@ JobPipeline::make([
     SeedDatabase::class,
 ])->send(function (TenantCreated $event) {
     return $event->tenant;
-})->shouldBeQueued(true)
-    ->onConnection('connection-different-from-default')
-    ->onQueue('queue-different-from-default')
-    ->timeout(180)
-    ->delay(15)
-    ->tries(2);
+})->shouldBeQueued(true, 'another-queue');
 ```
 
 Finally, convert the pipeline to a listener and bind it to an event:
