@@ -28,18 +28,7 @@ class JobPipeline implements ShouldQueue
     public bool $shouldBeQueued;
 
     /** @var string */
-    public string|null $connection;
-
-    /** @var string */
-    public string|null $queue;
-
-    /** @var int */
-    public int $timeout = 1;
-
-    public $delay = 0;
-
-    /** @var int */
-    public int $tries = 1;
+    public string $queue;
 
     public function __construct($jobs, callable $send = null, bool $shouldBeQueued = null)
     {
