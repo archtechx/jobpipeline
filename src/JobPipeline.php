@@ -64,60 +64,14 @@ class JobPipeline implements ShouldQueue
         return $this;
     }
 
-    public function shouldBeQueued(bool|string $shouldBeQueued = true)
+    public function shouldBeQueued(bool $shouldBeQueued = true, string $queue = '')
     {
-        if (is_string($shouldBeQueued))
+        $this->shouldBeQueued = $shouldBeQueued;
+
+        if ($queue)
         {
-            $this->shouldBeQueuedOn($shouldBeQueued);
+            $this->queue = $queue;
         }
-        else
-        {
-            $this->shouldBeQueued = $shouldBeQueued;
-        }
-
-        return $this;
-    }
-
-    public function shouldBeQueuedOn(string $queue)
-    {
-        $this->shouldBeQueued = true;
-
-        $this->onQueue($queue);
-
-        return $this;
-    }
-
-    public function onConnection(null|string $connection)
-    {
-        $this->connection = $connection;
-
-        return $this;
-    }
-
-    public function onQueue(null|string $queue)
-    {
-        $this->queue = $queue;
-
-        return $this;
-    }
-
-    public function timeout(int $timeoutInSeconds)
-    {
-        $this->timeout = $timeoutInSeconds;
-
-        return $this;
-    }
-
-    public function delay($delay)
-    {
-        $this->delay = $delay;
-
-        return $this;
-    }
-
-    public function tries(int $tries)
-    {
-        $this->tries = $tries;
 
         return $this;
     }

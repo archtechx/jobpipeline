@@ -87,7 +87,7 @@ class JobPipelineTest extends TestCase
             FooJob::class,
         ])->send(function () {
             return $this->valuestore;
-        })->shouldBeQueuedOn('another')
+        })->shouldBeQueued(true, 'another')
             ->toListener());
 
         $this->assertFalse($this->valuestore->has('foo'));
@@ -106,7 +106,7 @@ class JobPipelineTest extends TestCase
             FooJob::class,
         ])->send(function () {
             return $this->valuestore;
-        })->shouldBeQueuedOn('another')
+        })->shouldBeQueued(true, 'another')
             ->toListener());
 
         $this->assertFalse($this->valuestore->has('foo'));
