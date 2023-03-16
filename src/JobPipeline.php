@@ -24,10 +24,8 @@ class JobPipeline implements ShouldQueue
      */
     public $passable;
 
-    /** @var bool */
     public bool $shouldBeQueued;
 
-    /** @var string */
     public string $queue;
 
     public function __construct($jobs, callable $send = null, bool $shouldBeQueued = null)
