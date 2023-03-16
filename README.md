@@ -66,7 +66,7 @@ JobPipeline::make([
 })->shouldBeQueued(true)
 ```
 
-If you want to push the job to a different queue, you can pass a string as a second parameter:
+If you wish to push the job to a different queue, you can pass a string as the second parameter:
 
 ```php
 <?php
@@ -83,6 +83,8 @@ JobPipeline::make([
     return $event->tenant;
 })->shouldBeQueued(true, 'another-queue');
 ```
+
+This can be simplified by calling `shouldBeQueued(queue: 'another-queue')` since the first parameter defaults to `true`.
 
 Finally, convert the pipeline to a listener and bind it to an event:
 
