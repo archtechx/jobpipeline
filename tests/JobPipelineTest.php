@@ -81,6 +81,32 @@ class JobPipelineTest extends TestCase
     }
 
     /** @test */
+    public function job_pipelines_can_use_a_specific_queue()
+    {
+        Event::listen(TestEvent::class, JobPipeline::make([
+            FooJob::class,
+        ])->send(function () {
+            return $this->valuestore;
+        })->shouldBeQueued(queue: 'another')->toListener());
+
+        $this->assertFalse($this->valuestore->has('foo'));
+        event(new TestEvent(new TestModel()));
+        
+        $this->artisan('queue:work --once --queue=default');
+
+        sleep(1);
+
+        // Job hasn't run since it was pushed to the 'another' queue
+        $this->assertNull($this->valuestore->get('foo'));
+
+        $this->artisan('queue:work --once --queue=another');
+
+        sleep(1);
+
+        $this->assertSame('bar', $this->valuestore->get('foo'));
+    }
+
+    /** @test */
     public function job_pipeline_executes_jobs_and_passes_the_object_sequentially()
     {
         Event::listen(TestEvent::class, JobPipeline::make([
@@ -133,7 +159,7 @@ class JobPipelineTest extends TestCase
         // Foo job is not excuted
         $this->assertFalse($this->valuestore->has('foo'));
     }
-    
+
     /** @test */
     public function the_pipeline_can_execute_failed_method_on_job()
     {

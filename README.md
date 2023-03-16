@@ -66,6 +66,26 @@ JobPipeline::make([
 })->shouldBeQueued(true)
 ```
 
+If you wish to push the job to a different queue, you can pass a string as the second parameter:
+
+```php
+<?php
+
+use Stancl\Tenancy\Events\TenantCreated;
+use Stancl\JobPipeline\JobPipeline;
+use Stancl\Tenancy\Jobs\{CreateDatabase, MigrateDatabase, SeedDatabase};
+
+JobPipeline::make([
+    CreateDatabase::class,
+    MigrateDatabase::class,
+    SeedDatabase::class,
+])->send(function (TenantCreated $event) {
+    return $event->tenant;
+})->shouldBeQueued(true, 'another-queue');
+```
+
+This can be simplified by calling `shouldBeQueued(queue: 'another-queue')` since the first parameter defaults to `true`.
+
 Finally, convert the pipeline to a listener and bind it to an event:
 
 ```php
