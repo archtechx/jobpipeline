@@ -65,7 +65,7 @@ class JobPipeline implements ShouldQueue
             }
 
             try {
-                $result = app()->call($job);
+                $result = app()->call($job, $this->passable);
             } catch (Throwable $exception) {
                 if (method_exists(get_class($job[0]), 'failed')) {
                     call_user_func_array([$job[0], 'failed'], [$exception]);
