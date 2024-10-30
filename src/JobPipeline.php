@@ -61,13 +61,15 @@ class JobPipeline implements ShouldQueue
     {
         foreach ($this->jobs as $job) {
             if (is_string($job)) {
-                $job = [new $job(...$this->passable), 'handle'];
+                if (!str_contains($job, '@')) {
+                    $job = [new $job(...$this->passable), 'handle'];
+                }
             }
 
             try {
                 $result = app()->call($job, $this->passable);
             } catch (Throwable $exception) {
-                if (method_exists(get_class($job[0]), 'failed')) {
+                if (is_array($job) && method_exists(get_class($job[0]), 'failed')) {
                     call_user_func_array([$job[0], 'failed'], [$exception]);
                 } else {
                     throw $exception;

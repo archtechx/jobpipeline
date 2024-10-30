@@ -167,6 +167,40 @@ class JobPipelineTest extends TestCase
 
         $this->assertTrue($passes);
     }
+
+    /** @test */
+    public function send_can_pass_parameters_to_method()
+    {
+        Event::listen(TestEvent::class, JobPipeline::make([
+            [new FooJobWithMethod(), 'foo']
+        ])->send(function () {
+            return $this->valuestore;
+        })->toListener());
+
+        $this->assertFalse($this->valuestore->has('foo'));
+
+        event(new TestEvent(new TestModel()));
+
+        $this->assertSame('bar', $this->valuestore->get('foo'));
+    }
+
+    /** @test */
+    public function send_can_pass_parameters_to_method_with_at_syntax()
+    {
+        app()->bind('FooJobWithMethod', fn () => new FooJobWithMethod());
+
+        Event::listen(TestEvent::class, JobPipeline::make([
+            'FooJobWithMethod@foo'
+        ])->send(function () {
+            return $this->valuestore;
+        })->toListener());
+
+        $this->assertFalse($this->valuestore->has('foo'));
+
+        event(new TestEvent(new TestModel()));
+
+        $this->assertSame('bar', $this->valuestore->get('foo'));
+    }
 }
 
 class FooJob
@@ -285,5 +319,16 @@ class ExceptionJob
     public function failed(\Throwable $e)
     {
         $this->valuestore->put('exeception', $e->getMessage());
+    }
+}
+
+class FooJobWithMethod
+{
+    // variadic arguments must be used so the container doesn't try to inject any value
+    public function foo(...$arguments)
+    {
+        [$valuestore] = $arguments;
+
+        $valuestore->put('foo', 'bar');
     }
 }
