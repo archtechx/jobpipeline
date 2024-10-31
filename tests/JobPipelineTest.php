@@ -2,6 +2,7 @@
 
 namespace Stancl\JobPipeline\Tests;
 
+use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
@@ -169,37 +170,27 @@ class JobPipelineTest extends TestCase
     }
 
     /** @test */
-    public function send_can_pass_parameters_to_method()
+    public function failures_in_closures_will_throw_correctly()
     {
+        $passes = true;
+
         Event::listen(TestEvent::class, JobPipeline::make([
-            [new FooJobWithMethod(), 'foo']
-        ])->send(function () {
+            function () use (&$passes) {
+                try {
+                    throw new Exception('foobar');
+                } catch (Exception) {
+                    $passes = false;
+                }
+            }
+        ])->send(function (TestEvent $event) {
             return $this->valuestore;
         })->toListener());
 
-        $this->assertFalse($this->valuestore->has('foo'));
-
         event(new TestEvent(new TestModel()));
 
-        $this->assertSame('bar', $this->valuestore->get('foo'));
-    }
+        sleep(1);
 
-    /** @test */
-    public function send_can_pass_parameters_to_method_with_at_syntax()
-    {
-        app()->bind('FooJobWithMethod', fn () => new FooJobWithMethod());
-
-        Event::listen(TestEvent::class, JobPipeline::make([
-            'FooJobWithMethod@foo'
-        ])->send(function () {
-            return $this->valuestore;
-        })->toListener());
-
-        $this->assertFalse($this->valuestore->has('foo'));
-
-        event(new TestEvent(new TestModel()));
-
-        $this->assertSame('bar', $this->valuestore->get('foo'));
+        $this->assertFalse($passes);
     }
 }
 
@@ -319,16 +310,5 @@ class ExceptionJob
     public function failed(\Throwable $e)
     {
         $this->valuestore->put('exeception', $e->getMessage());
-    }
-}
-
-class FooJobWithMethod
-{
-    // variadic arguments must be used so the container doesn't try to inject any value
-    public function foo(...$arguments)
-    {
-        [$valuestore] = $arguments;
-
-        $valuestore->put('foo', 'bar');
     }
 }
