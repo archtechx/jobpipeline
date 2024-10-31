@@ -61,9 +61,7 @@ class JobPipeline implements ShouldQueue
     {
         foreach ($this->jobs as $job) {
             if (is_string($job)) {
-                if (!str_contains($job, '@')) {
-                    $job = [new $job(...$this->passable), 'handle'];
-                }
+                $job = [new $job(...$this->passable), 'handle'];
             }
 
             try {
