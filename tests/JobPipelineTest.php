@@ -162,7 +162,7 @@ class JobPipelineTest extends TestCase
             }
         ])->send(function (TestEvent $event) {
             return $event->testModel;
-        })->shouldBeQueued(false)->toListener());
+        })->toListener());
 
         event(new TestEvent(new TestModel()));
 
@@ -180,7 +180,7 @@ class JobPipelineTest extends TestCase
             }
         ])->send(function (TestEvent $event) {
             return $this->valuestore;
-        })->toListener());
+        })->shouldBeQueued(false)->toListener());
 
         event(new TestEvent(new TestModel()));
     }
