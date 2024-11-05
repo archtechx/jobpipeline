@@ -162,7 +162,7 @@ class JobPipelineTest extends TestCase
             }
         ])->send(function (TestEvent $event) {
             return $event->testModel;
-        })->toListener());
+        })->shouldBeQueued(false)->toListener());
 
         event(new TestEvent(new TestModel()));
 
@@ -172,25 +172,17 @@ class JobPipelineTest extends TestCase
     /** @test */
     public function failures_in_closures_will_throw_correctly()
     {
-        $passes = true;
+        $this->expectExceptionMessage('foobar');
 
         Event::listen(TestEvent::class, JobPipeline::make([
-            function () use (&$passes) {
-                try {
-                    throw new Exception('foobar');
-                } catch (Exception) {
-                    $passes = false;
-                }
+            function () {
+                throw new Exception('foobar');
             }
         ])->send(function (TestEvent $event) {
             return $this->valuestore;
         })->toListener());
 
         event(new TestEvent(new TestModel()));
-
-        sleep(1);
-
-        $this->assertFalse($passes);
     }
 }
 
