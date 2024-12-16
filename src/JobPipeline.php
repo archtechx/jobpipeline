@@ -28,7 +28,7 @@ class JobPipeline implements ShouldQueue
 
     public string $queue;
 
-    public function __construct($jobs, callable $send = null, bool $shouldBeQueued = null)
+    public function __construct($jobs, ?callable $send = null, ?bool $shouldBeQueued = null)
     {
         $this->jobs = $jobs;
         $this->send = $send ?? function ($event) {
