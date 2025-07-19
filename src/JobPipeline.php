@@ -51,7 +51,7 @@ class JobPipeline implements ShouldQueue
         return $this;
     }
 
-    public function shouldBeQueued(bool $shouldBeQueued = true, string $queue = null)
+    public function shouldBeQueued(bool $shouldBeQueued = true, string $queue = null): self
     {
         $this->shouldBeQueued = $shouldBeQueued;
 
