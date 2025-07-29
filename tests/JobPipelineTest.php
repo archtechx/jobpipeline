@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Queue;
 use Orchestra\Testbench\TestCase;
+use PHPUnit\Framework\Attributes\Test;
 use Spatie\Valuestore\Valuestore;
 use Stancl\JobPipeline\JobPipeline;
 
@@ -26,7 +27,7 @@ class JobPipelineTest extends TestCase
         $this->valuestore = Valuestore::make(__DIR__ . '/tmp/jobpipelinetest.json')->flush();
     }
 
-    /** @test */
+    #[Test]
     public function job_pipeline_can_listen_to_any_event()
     {
         Event::listen(TestEvent::class, JobPipeline::make([
@@ -42,7 +43,7 @@ class JobPipelineTest extends TestCase
         $this->assertSame('bar', $this->valuestore->get('foo'));
     }
 
-    /** @test */
+    #[Test]
     public function job_pipeline_can_be_queued()
     {
         Queue::fake();
@@ -63,7 +64,7 @@ class JobPipelineTest extends TestCase
         });
     }
 
-    /** @test */
+    #[Test]
     public function job_pipelines_run_when_queued()
     {
         Event::listen(TestEvent::class, JobPipeline::make([
@@ -81,7 +82,7 @@ class JobPipelineTest extends TestCase
         $this->assertSame('bar', $this->valuestore->get('foo'));
     }
 
-    /** @test */
+    #[Test]
     public function job_pipelines_can_use_a_specific_queue()
     {
         Event::listen(TestEvent::class, JobPipeline::make([
@@ -107,7 +108,7 @@ class JobPipelineTest extends TestCase
         $this->assertSame('bar', $this->valuestore->get('foo'));
     }
 
-    /** @test */
+    #[Test]
     public function job_pipeline_executes_jobs_and_passes_the_object_sequentially()
     {
         Event::listen(TestEvent::class, JobPipeline::make([
@@ -124,7 +125,7 @@ class JobPipelineTest extends TestCase
         $this->assertSame('first job changed property', $this->valuestore->get('foo'));
     }
 
-    /** @test */
+    #[Test]
     public function send_can_return_multiple_arguments()
     {
         Event::listen(TestEvent::class, JobPipeline::make([
@@ -140,7 +141,7 @@ class JobPipelineTest extends TestCase
         $this->assertSame(['a', 'b'], app('test_args'));
     }
 
-    /** @test */
+    #[Test]
     public function the_pipeline_can_be_canceled_by_returning_false_from_any_job()
     {
         Event::listen(TestEvent::class, JobPipeline::make([
@@ -161,7 +162,7 @@ class JobPipelineTest extends TestCase
         $this->assertFalse($this->valuestore->has('foo'));
     }
 
-    /** @test */
+    #[Test]
     public function the_pipeline_can_execute_failed_method_on_job()
     {
         Event::listen(TestEvent::class, JobPipeline::make([
@@ -177,7 +178,7 @@ class JobPipelineTest extends TestCase
         $this->assertEquals($this->valuestore->get('exeception'), 'pipeline exception');
     }
 
-    /** @test */
+    #[Test]
     public function closures_can_be_used_as_jobs()
     {
         $passes = false;
@@ -195,7 +196,7 @@ class JobPipelineTest extends TestCase
         $this->assertTrue($passes);
     }
 
-    /** @test */
+    #[Test]
     public function failures_in_closures_will_throw_correctly()
     {
         $this->expectExceptionMessage('foobar');

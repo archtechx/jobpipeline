@@ -39,19 +39,19 @@ class JobPipeline implements ShouldQueue
     }
 
     /** @param callable[]|string[] $jobs */
-    public static function make(array $jobs): self
+    public static function make(array $jobs): static
     {
         return new static($jobs);
     }
 
-    public function send(callable $send): self
+    public function send(callable $send): static
     {
         $this->send = $send;
 
         return $this;
     }
 
-    public function shouldBeQueued(bool $shouldBeQueued = true, ?string $queue = null)
+    public function shouldBeQueued(bool $shouldBeQueued = true, string|null $queue = null): static
     {
         $this->shouldBeQueued = $shouldBeQueued;
 
@@ -106,7 +106,7 @@ class JobPipeline implements ShouldQueue
     /**
      * Return a serializable version of the current object.
      */
-    public function executable($listenerArgs): self
+    public function executable($listenerArgs): static
     {
         $clone = clone $this;
 
